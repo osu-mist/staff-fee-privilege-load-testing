@@ -19,17 +19,17 @@ with open('config.yaml', 'r') as config_file:
 class UserBehavior(TaskSet):
     @task(2)
     def get_by_osuId_id(self):
-        url = '{}?osuId={}'.format(api_base_url, osu_id)
+        url = f'{api_base_url}?osuId={osu_id}'
         self.client.get(url, verify=False, auth=auth)
 
     @task(3)
     def get_by_term_id(self):
-        url = '{}?term={}'.format(api_base_url, term_id)
+        url = f'{api_base_url}?term={term_id}'
         self.client.get(url, verify=False, auth=auth)
 
     @task(1)
     def get_by_bad_request(self):
-        url = '{}'.format(api_base_url)
+        url = f'{api_base_url}'
         with self.client.get(
             url,
             catch_response=True, verify=False, auth=auth
@@ -39,12 +39,12 @@ class UserBehavior(TaskSet):
 
     @task(2)
     def get_by_id(self):
-        url = '{}/{}'.format(api_base_url, '{}-{}'.format(osu_id, term_id))
+        url = f'{api_base_url}/{osu_id}-{term_id}'
         self.client.get(url, verify=False, auth=auth)
 
     @task(1)
     def get_by_bad_id(self):
-        url = '{}/{}'.format(api_base_url, 'invalid_id')
+        url = f'{api_base_url}/invalid_id'
         with self.client.get(
             url,
             catch_response=True, verify=False, auth=auth
