@@ -23,17 +23,32 @@ The purpose of this repo is to load balance the [Staff Fee Privilege API](https:
 
 ## Report
 
-The following report is generated with different amount of users.
+The following report is generated with different amount of users and based on 30 connection pools.
 
-| Concurrent Users | Total requests | Total Fails | Failures Percentage |
-| ---------------- | -------------- | ----------- | ------------------- |
-| 10 | 330 | 0 | 0% |
-| 100 | 3665 | 28 | 1% |
-| 500 | 3163 | 24 | 1% |
-| 1000 | 3156 | 22 | 1% |
-| 1500 | 3675 | 117 | 3% |
-| 2000 | 2029 | 28 | 1% |
-| 2000 | 2830 | 200 | 7% |
-| 2000 | 3426 | 716 | 17% |
+| Concurrent Users | Total requests | Total Fails | Failures Percentage | Average (ms) | RPS |
+| ---------------- | -------------- | ----------- | ------------------- | ------------ | --------- |
+| 10 | 1012 | 0 | 0% | 140 | 3.3 |
+| 20 | 1013 | 3 | 0% | 154 | 7.2 |
+| 30 | 1524 | 3 | 0% | 172 | 10.5 |
+| 50 | 2057 | 10 | 0% | 240 | 19.8 |
+| 100 | 3695 | 33 | 1% | 417 | 34 |
+| 500 | 4164 | 71 | 2% | 11953 | 38.3 |
+| 1000 | 3706 | 53 | 1% | 29721 | 35.1 |
+| 1500 | 2628 | 39 | 1% | 41294 | 32 |
+| 1500 | 2936 | 151 | 5% | 40294 | 31.9 |
+| 1500 | 3426 | 468 | 12% | 37388 | 27 |
+| 2000 | 2015 | 23  | 1% | 45365 | 33.9 |
+| 2000 | 2717 | 145 | 5% | 41892 | 38.8 |
+| 2000 | 3128 | 847 | 21% | 39977 | 19.7 |
 
-According to the report, all of the failures types are `ConnectionError(ProtocolError('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer')),)` and most of them occur on requesting the endpoints which need longer time to respond, e.g. `GET /api/v1/staff-fee-privilege?term=term_id` will take about 3 seconds to respond if not cached. The Staff Fee Privilege API handle requests pretty well when users are less than 1500, however, when users increase to more than 2000, the failures ratio start increasing obviously as well.
+According to the report, all of the failures types are:
+
+  * `ConnectionResetError(54, 'Connection reset by peer')`
+
+  * `RemoteDisconnected('Remote end closed connection without response',)`
+
+Due to the SQL query speed limit, most of these errors occurred on requesting the endpoints which need longer time to respond, for instance, `GET /api/v1/staff-fee-privilege?term=term_id` could take up to 3 seconds to respond if not cached. When users less than 100, the total connection pools consumed the requests pretty well and the API only took 417 ms in average to respond for 3695 requests.
+
+However, when users grew to 500 - 1000, the speed performance started slowing down. This outcome was actually expected since we only have 30 pools for the load testing, and it seems like the limit of RPS (requests per second) of the API is 35 - 38, which means each pool could handle at most 1.1 - 1.2 requests per second when there are lots of users.
+
+While total users increased to 1500 - 2000, not only the response average time was influenced, the failures percentage was affected as well. When total requests were less than about 2500, the API still have good failures percentage (around 1%), however, when total requests were increased to about 3000, the API couldn't handle that much requests and the failures rate started increase as well.
