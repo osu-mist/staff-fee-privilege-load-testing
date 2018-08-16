@@ -21,6 +21,18 @@ The purpose of this repo is to load balance the [Staff Fee Privilege API](https:
 
       Once you’ve started Locust, you should be able to open up a browser and point it to http://localhost:8089 to access Locust’s web interface.
 
+## Testing environment:
+
+* commit: [bbdd23c](https://github.com/osu-mist/staff-fee-privilege-api/commit/bbdd23ca1094e4351bde939b508995e8d754051d)
+* database connection pooling configuration:
+
+  ```
+  database:
+    poolMin: 30
+    poolMax: 30
+    poolIncrement: 0
+        ```
+
 ## Report
 
 The following report is generated with different amount of users and based on 30 connection pools.
