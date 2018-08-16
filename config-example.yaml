@@ -1,0 +1,5 @@
+api_base_url: '/v1/staff-fee-privilege'
+term_id: '201701'
+osu_id: '123456789'
+user: 'user'
+password: 'password'
