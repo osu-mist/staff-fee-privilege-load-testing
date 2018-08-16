@@ -26,7 +26,7 @@ The purpose of this repo is to load balance the [Staff Fee Privilege API](https:
 The following report is generated with different amount of users and based on 30 connection pools.
 
 | Concurrent Users | Total requests | Total Fails | Failures Percentage | Average (ms) | RPS |
-| ---------------- | -------------- | ----------- | ------------------- | ------------ | --------- |
+| ---------------- | -------------- | ----------- | ------------------- | ------------ | --- |
 | 10 | 1012 | 0 | 0% | 140 | 3.3 |
 | 20 | 1013 | 3 | 0% | 154 | 7.2 |
 | 30 | 1524 | 3 | 0% | 172 | 10.5 |
